@@ -2,10 +2,7 @@ from constructs import Construct
 from aws_cdk import (
     Duration,
     Stack,
-    aws_iam as iam,
-    aws_sqs as sqs,
-    aws_sns as sns,
-    aws_sns_subscriptions as subs,
+    aws_dynamodb as dynamodb
 )
 
 
@@ -14,13 +11,8 @@ class PythonAwsCdkExampleStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        queue = sqs.Queue(
-            self, "PythonAwsCdkExampleQueue",
-            visibility_timeout=Duration.seconds(300),
+        table = dynamodb.Table(self, "Table",
+            partition_key=dynamodb.Attribute(name="member_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="council", type=dynamodb.AttributeType.STRING)
         )
-
-        topic = sns.Topic(
-            self, "PythonAwsCdkExampleTopic"
-        )
-
-        topic.add_subscription(subs.SqsSubscription(queue))
+        
